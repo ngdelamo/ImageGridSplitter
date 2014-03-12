@@ -53,16 +53,18 @@ def img_grid_split():
 
         # Split images
         row = 0
-        for y in range(0, image.size[1], step=args.maxheight):
-            y_distance_to_end = image.size[1] - y
-            height = min(args.maxheight, y_distance_to_end)
+        for bottom in range(0, image.size[1], args.maxheight):
+            bottom = image.size[1] - bottom
+            y_distance_to_end = bottom
+            top = bottom - min(args.maxheight, y_distance_to_end)
             col = 0
-            for x in range(0, image.size[0], step=args.maxwidth):
-                x_distance_to_end = image.size[0] - x
-                width = min(args.maxwidth, x_distance_to_end)
+            for left in range(0, image.size[0], args.maxwidth):
+                x_distance_to_end = image.size[0] - left
+                right = left + min(args.maxwidth, x_distance_to_end)
 
-                sub_image = image.crop(x, y, width, height)
-                output_file = "{f_name}-{row}-{col}.{ext}".format(f_name=os.path.splitext(input_file)[0], row=row,
+                box = (left, top, right, bottom)
+                sub_image = image.crop(box)
+                output_file = "{f_name}-{row}-{col}{ext}".format(f_name=os.path.splitext(input_file)[0], row=row,
                                                                   col=col, ext=os.path.splitext(input_file)[1])
                 try:
                     sub_image.save(output_file)
