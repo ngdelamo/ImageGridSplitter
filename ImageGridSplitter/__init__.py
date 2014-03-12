@@ -1,11 +1,9 @@
-import sys
-
-from PIL import Image
-
 __author__ = 'ngdelamo'
 
+import sys
 import os
 import argparse
+from PIL import Image
 
 
 def rel_to_abs_path(path):
