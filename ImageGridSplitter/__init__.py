@@ -3,6 +3,7 @@ __author__ = 'ngdelamo'
 import sys
 import os
 import argparse
+
 from PIL import Image
 
 
@@ -15,17 +16,15 @@ def img_grid_split():
     parser = argparse.ArgumentParser(
         description='Split images bigger than a certain size into a grid of smaller sub-images. Sub-images are named '
                     'as <original_image_name>-<row>-<col>.<ext>, where <row> and <col> start at (0,0) and indicate '
-                    'the bottom-left sub-image.'
-                    ''
-                    'For example, a 1024x1024 image named "image.png" would be splitted into 4 images of size 512x512, '
-                    'named "image-0-0.png", "image-0-1.png", "image-1-0.png" and "image-1-1.png", where "image-0-0'
-                    '.png" is the sub-image at the bottom-left, "image-0-1.png" is the sub-image at the bottom-right, '
-                    '"image-1-0.png" is the sub-image at the top-left, and "image-1-1.png" is the sub-image at the '
-                    'top-right.')
+                    'the bottom-left sub-image. For example, a 1024x1024 image named "image.png" would be splitted '
+                    'into 4 images of size 512x512, named "image-0-0.png", "image-0-1.png", "image-1-0.png" and '
+                    '"image-1-1.png", where "image-0-0.png" is the sub-image at the bottom-left, "image-0-1.png" is '
+                    'the sub-image at the bottom-right, "image-1-0.png" is the sub-image at the top-left, '
+                    'and "image-1-1.png" is the sub-image at the top-right.')
     parser.add_argument('input_files', nargs='+', help='A list of input image files')
-    parser.add_argument('-w', '--maxwidth', type=int, default=512,
+    parser.add_argument('-mw', '--maxwidth', type=int, default=512,
                         help='The max width of the sub-images (defaults to 512px)')
-    parser.add_argument('-h', '--maxheight', type=int, default=512,
+    parser.add_argument('-mh', '--maxheight', type=int, default=512,
                         help='The max height of the sub-images (defaults to 512px)')
 
     # Parse arguments
