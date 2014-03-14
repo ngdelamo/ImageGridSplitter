@@ -42,6 +42,8 @@ def img_grid_split():
                         help='The max width of the sub-images (defaults to 512px)')
     parser.add_argument('-mh', '--maxheight', type=int, default=512,
                         help='The max height of the sub-images (defaults to 512px)')
+    parser.add_argument('-d', '--delete', default=False, action='store_true',
+                        help='Delete the original image once it has been splitted')
 
     # Parse arguments
     args = parser.parse_args()
@@ -89,3 +91,7 @@ def img_grid_split():
                     print(msg, file=sys.stderr)
                 col += 1
             row += 1
+
+        # Remove images
+        if args.delete:
+            os.remove(input_file)
