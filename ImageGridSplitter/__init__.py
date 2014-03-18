@@ -38,10 +38,14 @@ def img_grid_split():
                     'the sub-image at the bottom-right, "image-1-0.png" is the sub-image at the top-left, '
                     'and "image-1-1.png" is the sub-image at the top-right.')
     parser.add_argument('input_files', nargs='+', help='A list of input image files')
-    parser.add_argument('-mw', '--maxwidth', type=int, default=512,
+    parser.add_argument('-Mw', '--maxwidth', type=int, default=512,
                         help='The max width of the sub-images (defaults to 512px)')
-    parser.add_argument('-mh', '--maxheight', type=int, default=512,
+    parser.add_argument('-Mh', '--maxheight', type=int, default=512,
                         help='The max height of the sub-images (defaults to 512px)')
+    parser.add_argument('-mw', '--minwidth', type=int, default=1024,
+                        help='The min width of the image to split it into sub-images (defaults to 1024px)')
+    parser.add_argument('-mh', '--minheight', type=int, default=1024,
+                        help='The min height of the image to split it into sub-images (defaults to 1024px)')
     parser.add_argument('-d', '--delete', default=False, action='store_true',
                         help='Delete the original image once it has been splitted')
 
@@ -65,8 +69,8 @@ def img_grid_split():
             print(msg, file=sys.stderr)
             continue
 
-        # Ignore images smaller than maxwidth x maxheight
-        if image.size[0] < args.maxwidth and image.size[1] < args.maxheight:
+        # Ignore images smaller than minwidth x minheight
+        if image.size[0] < args.minwidth and image.size[1] < args.minheight:
             continue
 
         # Split images
