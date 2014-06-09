@@ -27,31 +27,7 @@ def rel_to_abs_path(path):
     return os.path.abspath(os.path.join(os.getcwd(), path))
 
 
-def img_grid_split():
-    # Create the argument parser and define accepted arguments
-    parser = argparse.ArgumentParser(
-        description='Split images bigger than a certain size into a grid of smaller sub-images. Sub-images are named '
-                    'as <original_image_name>-<row>-<col>.<ext>, where <row> and <col> start at (0,0) and indicate '
-                    'the bottom-left sub-image. For example, a 1024x1024 image named "image.png" would be splitted '
-                    'into 4 images of size 512x512, named "image-0-0.png", "image-0-1.png", "image-1-0.png" and '
-                    '"image-1-1.png", where "image-0-0.png" is the sub-image at the bottom-left, "image-0-1.png" is '
-                    'the sub-image at the bottom-right, "image-1-0.png" is the sub-image at the top-left, '
-                    'and "image-1-1.png" is the sub-image at the top-right.')
-    parser.add_argument('input_files', nargs='+', help='A list of input image files')
-    parser.add_argument('-Mw', '--maxwidth', type=int, default=512,
-                        help='The max width of the sub-images (defaults to 512px)')
-    parser.add_argument('-Mh', '--maxheight', type=int, default=512,
-                        help='The max height of the sub-images (defaults to 512px)')
-    parser.add_argument('-mw', '--minwidth', type=int, default=1024,
-                        help='The min width of the image to split it into sub-images (defaults to 1024px)')
-    parser.add_argument('-mh', '--minheight', type=int, default=1024,
-                        help='The min height of the image to split it into sub-images (defaults to 1024px)')
-    parser.add_argument('-d', '--delete', default=False, action='store_true',
-                        help='Delete the original image once it has been splitted')
-
-    # Parse arguments
-    args = parser.parse_args()
-
+def img_grid_split(args):
     # Process images
     for input_file in args.input_files:
         # Check input file
@@ -99,3 +75,31 @@ def img_grid_split():
         # Remove images
         if args.delete:
             os.remove(input_file)
+
+def main():
+    # Create the argument parser and define accepted arguments
+    parser = argparse.ArgumentParser(
+        description='Split images bigger than a certain size into a grid of smaller sub-images. Sub-images are named '
+                    'as <original_image_name>-<row>-<col>.<ext>, where <row> and <col> start at (0,0) and indicate '
+                    'the bottom-left sub-image. For example, a 1024x1024 image named "image.png" would be splitted '
+                    'into 4 images of size 512x512, named "image-0-0.png", "image-0-1.png", "image-1-0.png" and '
+                    '"image-1-1.png", where "image-0-0.png" is the sub-image at the bottom-left, "image-0-1.png" is '
+                    'the sub-image at the bottom-right, "image-1-0.png" is the sub-image at the top-left, '
+                    'and "image-1-1.png" is the sub-image at the top-right.')
+    parser.add_argument('input_files', nargs='+', help='A list of input image files')
+    parser.add_argument('-Mw', '--maxwidth', type=int, default=512,
+                        help='The max width of the sub-images (defaults to 512px)')
+    parser.add_argument('-Mh', '--maxheight', type=int, default=512,
+                        help='The max height of the sub-images (defaults to 512px)')
+    parser.add_argument('-mw', '--minwidth', type=int, default=1024,
+                        help='The min width of the image to split it into sub-images (defaults to 1024px)')
+    parser.add_argument('-mh', '--minheight', type=int, default=1024,
+                        help='The min height of the image to split it into sub-images (defaults to 1024px)')
+    parser.add_argument('-d', '--delete', default=False, action='store_true',
+                        help='Delete the original image once it has been splitted')
+
+    # Parse arguments
+    args = parser.parse_args()
+
+    # Call main function
+    img_grid_split(args)
