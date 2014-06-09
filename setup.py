@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ImageGridSplitter',
-    version='0.0.1',
+    version='0.0.2',
     author='Nacho Garcia',
     packages=find_packages(exclude=['tests/', 'tests.*']),
     install_requires=['Pillow>=2.3.0'],
