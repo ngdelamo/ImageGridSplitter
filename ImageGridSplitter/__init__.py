@@ -5,7 +5,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,20 @@ import argparse
 
 from PIL import Image
 
+DEFAULT_MAX_WIDTH = 512
+DEFAULT_MAX_HEIGHT = 512
+DEFAULT_MIN_WIDTH = 1024
+DEFAULT_MIN_HEIGHT = 1024
+DEFAULT_DELETE = False
+
 
 def rel_to_abs_path(path):
     return os.path.abspath(os.path.join(os.getcwd(), path))
 
 
-def img_grid_split(args):
+def img_grid_split(input_files, maxwidth=DEFAULT_MAX_WIDTH, maxheight=DEFAULT_MAX_HEIGHT, minwidth=DEFAULT_MIN_WIDTH, minheight=DEFAULT_MIN_HEIGHT, delete=DEFAULT_DELETE):
     # Process images
-    for input_file in args.input_files:
+    for input_file in input_files:
         # Check input file
         input_file = rel_to_abs_path(input_file)
         if not os.path.exists(input_file):
@@ -46,24 +52,24 @@ def img_grid_split(args):
             continue
 
         # Ignore images smaller than minwidth x minheight
-        if image.size[0] < args.minwidth and image.size[1] < args.minheight:
+        if image.size[0] < minwidth and image.size[1] < minheight:
             continue
 
         # Split images
         row = 0
-        for bottom in range(0, image.size[1], args.maxheight):
+        for bottom in range(0, image.size[1], maxheight):
             bottom = image.size[1] - bottom
             y_distance_to_end = bottom
-            top = bottom - min(args.maxheight, y_distance_to_end)
+            top = bottom - min(maxheight, y_distance_to_end)
             col = 0
-            for left in range(0, image.size[0], args.maxwidth):
+            for left in range(0, image.size[0], maxwidth):
                 x_distance_to_end = image.size[0] - left
-                right = left + min(args.maxwidth, x_distance_to_end)
+                right = left + min(maxwidth, x_distance_to_end)
 
                 box = (left, top, right, bottom)
                 sub_image = image.crop(box)
                 output_file = "{f_name}-{row}-{col}{ext}".format(f_name=os.path.splitext(input_file)[0], row=row,
-                                                                  col=col, ext=os.path.splitext(input_file)[1])
+                                                                 col=col, ext=os.path.splitext(input_file)[1])
                 try:
                     sub_image.save(output_file)
                 except IOError:
@@ -73,8 +79,9 @@ def img_grid_split(args):
             row += 1
 
         # Remove images
-        if args.delete:
+        if delete:
             os.remove(input_file)
+
 
 def main():
     # Create the argument parser and define accepted arguments
@@ -87,19 +94,24 @@ def main():
                     'the sub-image at the bottom-right, "image-1-0.png" is the sub-image at the top-left, '
                     'and "image-1-1.png" is the sub-image at the top-right.')
     parser.add_argument('input_files', nargs='+', help='A list of input image files')
-    parser.add_argument('-Mw', '--maxwidth', type=int, default=512,
-                        help='The max width of the sub-images (defaults to 512px)')
-    parser.add_argument('-Mh', '--maxheight', type=int, default=512,
-                        help='The max height of the sub-images (defaults to 512px)')
-    parser.add_argument('-mw', '--minwidth', type=int, default=1024,
-                        help='The min width of the image to split it into sub-images (defaults to 1024px)')
-    parser.add_argument('-mh', '--minheight', type=int, default=1024,
-                        help='The min height of the image to split it into sub-images (defaults to 1024px)')
-    parser.add_argument('-d', '--delete', default=False, action='store_true',
-                        help='Delete the original image once it has been splitted')
+    parser.add_argument('-Mw', '--maxwidth', type=int, default=DEFAULT_MAX_WIDTH,
+                        help='The max width of the sub-images (defaults to {default}px)'.format(
+                            default=DEFAULT_MAX_WIDTH))
+    parser.add_argument('-Mh', '--maxheight', type=int, default=DEFAULT_MAX_HEIGHT,
+                        help='The max height of the sub-images (defaults to {default}px)'.format(
+                            default=DEFAULT_MAX_HEIGHT))
+    parser.add_argument('-mw', '--minwidth', type=int, default=DEFAULT_MIN_WIDTH,
+                        help='The min width of the image to split it into sub-images (defaults to {default}px)'.format(
+                            default=DEFAULT_MIN_WIDTH))
+    parser.add_argument('-mh', '--minheight', type=int, default=DEFAULT_MIN_HEIGHT,
+                        help='The min height of the image to split it into sub-images (defaults to {default}px)'.format(
+                            default=DEFAULT_MIN_HEIGHT))
+    parser.add_argument('-d', '--delete', default=DEFAULT_DELETE, action='store_true',
+                        help='Delete the original image once it has been splitted (defaults to {default})'.format(
+                            default=DEFAULT_DELETE))
 
     # Parse arguments
     args = parser.parse_args()
 
     # Call main function
-    img_grid_split(args)
+    img_grid_split(args.input_files, args.maxwidth, args.maxheight, args.minwidth, args.minheight, args.delete)
